@@ -1,23 +1,31 @@
-CKEDITOR.plugins.add('syntaxhighlight',
-{
-	requires : [ 'dialog' ],
-	lang : [ 'en' ],
-	
-	init : function(editor)
-	{
-		var pluginName = 'syntaxhighlight';
-		var command = editor.addCommand(pluginName, new CKEDITOR.dialogCommand(pluginName) );
-		command.modes = { wysiwyg:1, source:1 };
-		command.canUndo = false;
-
-		editor.ui.addButton('Code',
+CKEDITOR.plugins.add( 'syntaxhighlight', {
+	requires : 'dialog',
+	lang : 'en,de', // %REMOVE_LINE_CORE%
+	icons : 'syntaxhighlight', // %REMOVE_LINE_CORE%
+	init : function( editor ) {
+		editor.addCommand( 'syntaxhighlightDialog', new CKEDITOR.dialogCommand( 'syntaxhighlightDialog' ) );
+		editor.ui.addButton && editor.ui.addButton( 'Syntaxhighlight',
 		{
-				label : editor.lang.syntaxhighlight.title,
-				command : pluginName,
-				icon: this.path + 'images/syntaxhighlight.gif'
-		});
+			label : editor.lang.syntaxhighlight.title,
+			command : 'syntaxhighlightDialog',
+			toolbar : 'insert,98'
+		} );
 
-		CKEDITOR.dialog.add(pluginName, this.path + 'dialogs/syntaxhighlight.js' );
+		if ( editor.contextMenu ) {
+			editor.addMenuGroup( 'syntaxhighlightGroup' );
+			editor.addMenuItem( 'syntaxhighlightItem', {
+				label: editor.lang.syntaxhighlight.contextTitle,
+				icon: this.path + 'icons/syntaxhighlight.gif',
+				command: 'syntaxhighlightDialog',
+				group: 'syntaxhighlightGroup'
+			});
+			editor.contextMenu.addListener( function( element ) {
+				if ( element.getAscendant( 'pre', true ) ) {
+					return { syntaxhighlightItem: CKEDITOR.TRISTATE_OFF };
+				}
+			});
+		}
+
+		CKEDITOR.dialog.add( 'syntaxhighlightDialog', this.path + 'dialogs/syntaxhighlight.js' );
 	}
 });
-
