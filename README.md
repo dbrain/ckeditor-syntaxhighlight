@@ -1,2 +1,3 @@
 # ckeditor-syntaxhighlight
-A plugin for CKEditor 3+ that enabled code syntax highlighting. Mostly abandoned by owner (sorry), as it was just hacked out for a project I was working on at the time.
+A plugin for CKEditor 4+ that enabled code syntax highlighting.
+Updated and german support added by s.ziegltrum
