@@ -15,7 +15,7 @@ CKEDITOR.plugins.add( 'syntaxhighlight', {
 			editor.addMenuGroup( 'syntaxhighlightGroup' );
 			editor.addMenuItem( 'syntaxhighlightItem', {
 				label: editor.lang.syntaxhighlight.contextTitle,
-				icon: this.path + 'icons/syntaxhighlight.gif',
+				icon: this.path + 'icons/syntaxhighlight.png',
 				command: 'syntaxhighlightDialog',
 				group: 'syntaxhighlightGroup'
 			});
