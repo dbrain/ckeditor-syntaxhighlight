@@ -1,94 +1,118 @@
-CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
-	var a=function(f) {
-		f=f.replace(/<br>/g,"\n");
-		f=f.replace(/&amp;/g,"&");
-		f=f.replace(/&lt;/g,"<");
-		f=f.replace(/&gt;/g,">");
-		f=f.replace(/&quot;/g,'"');
-		return f
+﻿CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
+	var parseHtml=function(htmlString) {
+		htmlStrin=ghtmlString.replace(/<br>/g,"\n");
+		htmlString=htmlString.replace(/&amp;/g,'&');
+		htmlString=htmlString.replace(/&lt;/g,'<');
+		htmlString=htmlString.replace(/&gt;/g,'>');
+		htmlString=htmlString.replace(/&quot;/g,'"');
+		return htmlString
 	};
-	var e=function(f) {
-		var f=new Object();
-		f.hideGutter=false;
-		f.hideControls=false;
-		f.collapse=false;
-		f.showColumns=false;
-		f.noWrap=false;
-		f.firstLineChecked=false;
-		f.firstLine=0;
-		f.highlightChecked=false;
-		f.highlight=null;
-		f.lang=null;
-		f.code='';
-		return f
+	var getDefaultOptions=function() {
+		var options=new Object();
+		var validLangs=['applescript','actionscript3','as3','bash','shell','sh','coldfusion','cf','cpp','c','c#','c-sharp','csharp','css','delphi','pascal','pas','diff','patch','erl','erlang','groovy','haxe','hx','java','jfx','javafx','js','jscript','javascript','perl','Perl','pl','php','text','plain','powershell','ps','posh','py','python','ruby','rails','ror','rb','sass','scss','scala','sql','vb','vbnet','xml','xhtml','xslt','html'];
+		options.hideGutter=String(editor.config.syntaxhighlight_hideGutter).toLowerCase()==='true';
+		options.hideControls=String(editor.config.syntaxhighlight_hideControls).toLowerCase()==='true';
+		options.collapse=String(editor.config.syntaxhighlight_collapse).toLowerCase()==='true';
+		options.showColumns=String(editor.config.syntaxhighlight_showColumns).toLowerCase()==='true';
+		options.noWrap=String(editor.config.syntaxhighlight_noWrap).toLowerCase()==='true';
+		options.firstLine=editor.config.syntaxhighlight_firstLine;
+		options.highlightChecked=String(editor.config.syntaxhighlight_highlightChecked).toLowerCase()==='true';
+		options.highlight=editor.config.syntaxhighlight_highlight;
+		options.lang=(validLangs.indexOf(editor.config.syntaxhighlight_lang)>-1) ? editor.config.syntaxhighlight_lang : 'as3';
+		options.code=editor.config.syntaxhighlight_code;
+		return options
 	};
-	var b=function(i) {
-		var h=e();
-		if(i) {
-			if(i.indexOf('brush')>-1) {
-				var g=/brush:[ ]{0,1}(\w*)/.exec(i);
-				if(g!=null&&g.length>0) {
-					h.lang=g[1].replace(/^\s+|\s+$/g,'')
+	var getOptionsForString=function(optionsString) {
+		var options=getDefaultOptions();
+		if(optionsString) {
+			if(optionsString.indexOf('brush')>-1) {
+				var match=/brush:[ ]*(\w*)/.exec(optionsString);
+				if(match!=null&&match.length>0) {
+					options.lang=match[1].replace(/^\s+|\s+$/g,'');
+					if(options.lang=='actionscript') options.lang='as3';
+					else if(options.lang=='shell'||options.lang=='sh') options.lang='bash';
+					else if(options.lang=='coldfusion') options.lang='cf';
+					else if(options.lang=='c') options.lang='cpp';
+					else if(options.lang=='c#'||options.lang=='c-sharp') options.lang='csharp';
+					else if(options.lang=='pascal'||options.lang=='pas') options.lang='delphi';
+					else if(options.lang=='patch') options.lang='diff';
+					else if(options.lang=='erlang') options.lang='erl';
+					else if(options.lang=='haxe') options.lang='hx';
+					else if(options.lang=='jfx') options.lang='javafx';
+					else if(options.lang=='js'||options.lang=='javascript') options.lang='jscript';
+					else if(options.lang=='Perl'||options.lang=='pl') options.lang='perl';
+					else if(options.lang=='text') options.lang='plain';
+					else if(options.lang=='powershell'||options.lang=='posh') options.lang='ps';
+					else if(options.lang=='py') options.lang='python';
+					else if(options.lang=='rails'||options.lang=='ror'||options.lang=='rb') options.lang='ruby';
+					else if(options.lang=='sass') options.lang='scss';
+					else if(options.lang=='vbnet') options.lang='vb';
+					else if(options.lang=='xhtml'||options.lang=='xslt'||options.lang=='html') options.lang='xml'
 				}
 			}
-			if(i.indexOf('gutter')>-1) {
-				h.hideGutter=true
+			if(optionsString.indexOf('gutter')>-1) {
+				options.hideGutter=true
 			}
-			if(i.indexOf('toolbar')>-1) {
-				h.hideControls=true
+			if(optionsString.indexOf('toolbar')>-1) {
+				options.hideControls=true
 			}
-			if(i.indexOf('collapse')>-1) {
-				h.collapse=true
+			if(optionsString.indexOf('collapse')>-1) {
+				options.collapse=true
 			}
-			if(i.indexOf('first-line')>-1) {
-				var g=/first-line:[ ]{0,1}([0-9]{1,4})/.exec(i);
-				if(g!=null&&g.length>0&&g[1]>1) {
-					h.firstLineChecked=true;
-					h.firstLine=g[1]
+			if(optionsString.indexOf('first-line')>-1) {
+				var match=/first-line:[ ]*([0-9]{1,4})/.exec(optionsString);
+				if(match!=null&&match.length>0&&match[1]>1) {
+					options.firstLine=match[1]
 				}
 			}
-			if(i.indexOf('highlight')>-1) {
-				if(i.match(/highlight:[ ]{0,1}\[[0-9]+(,[0-9]+)*\]/)) {
-					var f=/highlight:[ ]{0,1}\[(.*)\]/.exec(i);
-					if(f!=null&&f.length>0) {
-						h.highlightChecked=true;
-						h.highlight=f[1]
+			if(optionsString.indexOf('highlight')>-1) {
+				if(optionsString.match(/highlight:[ ]*\[[0-9]+(,[0-9]+)*\]/)) {
+					var match_hl=/highlight:[ ]*\[(.*)\]/.exec(optionsString);
+					if(match_hl!=null&&match_hl.length>0) {
+						options.highlightChecked=true;
+						options.highlight=match_hl[1]
 					}
 				}
 			}
-			if(i.indexOf('ruler')>-1) {
-				h.showColumns=true
+			if(optionsString.indexOf('ruler')>-1) {
+				options.showColumns=true
 			}
-			if(i.indexOf('wrap-lines')>-1) {
-				h.noWrap=true
+			if(optionsString.indexOf('wrap-lines')>-1) {
+				options.noWrap=true
 			}
 		}
-		return h
+		return options
 	};
-	var d=function(g) {
-		var f='brush:'+g.lang+';';
-		if(g.hideGutter) {
-			f+='gutter:false;'
+	var getStringForOptions=function(optionsObject) {
+		var result='brush:'+optionsObject.lang+';';
+		if(optionsObject.hideGutter) {
+			result+='gutter:false;'
 		}
-		if(g.hideControls) {
-			f+='toolbar:false;'
+		if(optionsObject.hideControls) {
+			result+='toolbar:false;'
 		}
-		if(g.collapse) {
-			f+='collapse:true;'
+		if(optionsObject.collapse) {
+			result+='collapse:true;'
 		}
-		if(g.showColumns) {
-			f+='ruler:true;'
+		if(optionsObject.showColumns) {
+			result+='ruler:true;'
 		}
-		if(g.noWrap) {
-			f+='wrap-lines:false;'
+		if(optionsObject.noWrap) {
+			result+='wrap-lines:false;'
 		}
-		if(g.firstLineChecked&&g.firstLine>1) {
-			f+='first-line:'+g.firstLine+';'
+		if(optionsObject.firstLine.length>0) {
+			optionsObject.firstLine=optionsObject.firstLine.replace(/[^0-9]+/g,'');
+			if(optionsObject.firstLine.length>0&&optionsObject.firstLine>1) {
+				result+='first-line:'+optionsObject.firstLine+';'
+			}
 		}
-		if(g.highlightChecked&&g.highlight!='') {
-			f+='highlight: ['+g.highlight.replace(/\s/gi,'')+'];'
+		if(optionsObject.highlight!=null&&optionsObject.highlight.length>0) {
+			optionsObject.highlight=optionsObject.highlight.replace(/[^\d,]+/g,'').replace(/,{2,}/g,',').replace(/(^,)|(,$)/g,'');
+			if(optionsObject.highlight.length>0) {
+				result+='highlight:['+optionsObject.highlight.replace(/\s/gi,'')+'];'
+			}
 		}
-		return f
+		return result
 	};
 	return {
 		title : editor.lang.syntaxhighlight.title,
@@ -108,36 +132,42 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								type : 'select',
 								labelLayout : 'horizontal',
 								label : editor.lang.syntaxhighlight.langLbl,
-								'default' : 'java',
 								widths : ['25%','75%'],
 								items : [
+									['ActionScript3','as3'],
+									['AppleScript','applescript'],
 									['Bash (Shell)','bash'],
+									['ColdFusion','cf'],
 									['C#','csharp'],
 									['C++','cpp'],
 									['CSS','css'],
 									['Delphi','delphi'],
 									['Diff','diff'],
+									['Erlang','erl'],
 									['Groovy','groovy'],
+									['Haxe','hx'],
 									['Javascript','jscript'],
 									['Java','java'],
 									['Java FX','javafx'],
 									['Perl','perl'],
 									['PHP','php'],
 									['Plain (Text)','plain'],
+									['PowerShell','ps'],
 									['Python','python'],
 									['Ruby','ruby'],
+									['Sass','scss'],
 									['Scala','scala'],
 									['SQL','sql'],
 									['VB','vb'],
 									['XML/XHTML','xml']
 								],
-								setup : function(f) {
-									if(f.lang) {
-										this.setValue(f.lang)
+								setup : function(data) {
+									if(data.lang) {
+										this.setValue(data.lang)
 									}
 								},
-								commit : function(f) {
-									f.lang=this.getValue()
+								commit : function(data) {
+									data.lang=this.getValue()
 								}
 							}
 						]
@@ -148,13 +178,13 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 						rows : 22,
 						style : 'width:100%',
 						validate: CKEDITOR.dialog.validate.notEmpty( editor.lang.syntaxhighlight.sourceTextareaEmptyError ),
-						setup : function(f) {
-							if(f.code) {
-								this.setValue(f.code)
+						setup : function(data) {
+							if(data.code) {
+								this.setValue(data.code)
 							}
 						},
-						commit : function(f) {
-							f.code=this.getValue()
+						commit : function(data) {
+							data.code=this.getValue()
 						}
 					}
 				]
@@ -175,11 +205,11 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								type : 'checkbox',
 								id : 'hide_gutter',
 								label : editor.lang.syntaxhighlight.hideGutterLbl,
-								setup : function(f) {
-									this.setValue(f.hideGutter)
+								setup : function(data) {
+									this.setValue(data.hideGutter)
 								},
-								commit : function(f) {
-									f.hideGutter=this.getValue()
+								commit : function(data) {
+									data.hideGutter=this.getValue()
 								}
 							},
 							{
@@ -190,11 +220,11 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								type : 'checkbox',
 								id : 'hide_controls',
 								label : editor.lang.syntaxhighlight.hideControlsLbl,
-								setup : function(f) {
-									this.setValue(f.hideControls)
+								setup : function(data) {
+									this.setValue(data.hideControls)
 								},
-								commit : function(f) {
-									f.hideControls=this.getValue()
+								commit : function(data) {
+									data.hideControls=this.getValue()
 								}
 							},
 							{
@@ -205,11 +235,11 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								type : 'checkbox',
 								id : 'collapse',
 								label : editor.lang.syntaxhighlight.collapseLbl,
-								setup : function(f) {
-									this.setValue(f.collapse)
+								setup : function(data) {
+									this.setValue(data.collapse)
 								},
-								commit : function(f) {
-									f.collapse=this.getValue()
+								commit : function(data) {
+									data.collapse=this.getValue()
 								}
 							},
 							{
@@ -220,11 +250,11 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								type : 'checkbox',
 								id : 'show_columns',
 								label : editor.lang.syntaxhighlight.showColumnsLbl,
-								setup : function(f) {
-									this.setValue(f.showColumns)
+								setup : function(data) {
+									this.setValue(data.showColumns)
 								},
-								commit : function(f) {
-									f.showColumns=this.getValue()
+								commit : function(data) {
+									data.showColumns=this.getValue()
 								}
 							},
 							{
@@ -235,11 +265,11 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								type : 'checkbox',
 								id : 'line_wrap',
 								label : editor.lang.syntaxhighlight.lineWrapLbl,
-								setup : function(f) {
-									this.setValue(f.noWrap)
+								setup : function(data) {
+									this.setValue(data.noWrap)
 								},
-								commit : function(f) {
-									f.noWrap=this.getValue()
+								commit : function(data) {
+									data.noWrap=this.getValue()
 								}
 							},
 							{
@@ -251,29 +281,18 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								widths : ['5%','95%'],
 								children : [
 									{
-										type : 'checkbox',
-										id : 'lc_toggle',
-										label : '',
-										setup : function(f) {
-											this.setValue(f.firstLineChecked)
-										},
-										commit : function(f) {
-											f.firstLineChecked=this.getValue()
-										}
-									},
-									{
 										type : 'text',
 										id : 'default_lc',
 										style : 'width:15%;',
 										label : '',
-										setup : function(f) {
-											if(f.firstLine>1) {
-												this.setValue(f.firstLine)
+										setup : function(data) {
+											if(data.firstLine>1) {
+												this.setValue(data.firstLine)
 											}
 										},
-										commit : function(f) {
+										commit : function(data) {
 											if(this.getValue()&&this.getValue()!='') {
-												f.firstLine=this.getValue()
+												data.firstLine=this.getValue()
 											}
 										}
 									}
@@ -288,29 +307,18 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								widths : ['5%','95%'],
 								children : [
 									{
-										type : 'checkbox',
-										id : 'hl_toggle',
-										label : '',
-										setup : function(f) {
-											this.setValue(f.highlightChecked)
-										},
-										commit : function(f) {
-											f.highlightChecked=this.getValue()
-										}
-									},
-									{
 										type : 'text',
 										id : 'default_hl',
 										style : 'width:40%;',
 										label : '',
-										setup : function(f) {
-											if(f.highlight!=null) {
-												this.setValue(f.highlight)
+										setup : function(data) {
+											if(data.highlight!=null) {
+												this.setValue(data.highlight)
 											}
 										},
-										commit : function(f) {
+										commit : function(data) {
 											if(this.getValue()&&this.getValue()!='') {
-												f.highlight=this.getValue()
+												data.highlight=this.getValue()
 											}
 										}
 									}
@@ -320,10 +328,6 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								type : 'hbox',
 								widths : ['5%','95%'],
 								children : [
-									{
-										type : 'html',
-										html : ''
-									},
 									{
 										type : 'html',
 										html : '<i>'+editor.lang.syntaxhighlight.highlightLbl+'</i>'
@@ -336,37 +340,37 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 			}
 		],
 		onShow : function() {
-			var i=this.getParentEditor();
-			var h=i.getSelection();
-			var g=h.getStartElement();
-			var k=g&&g.getAscendant('pre',true);
-			var j='';
-			var f=null;
-			if(k) {
-				code=a(k.getHtml());
-				f=b(k.getAttribute('class'));
-				f.code=code
+			var editor=this.getParentEditor();
+			var selection=editor.getSelection();
+			var element=selection.getStartElement();
+			var preElement=element&&element.getAscendant('pre',true);
+			var text='';
+			var optionsObj=null;
+			if(preElement) {
+				code=parseHtml(preElement.getHtml());
+				optionsObj=getOptionsForString(preElement.getAttribute('class'));
+				optionsObj.code=code
 			} else {
-				f=e()
+				optionsObj=getDefaultOptions()
 			}
-			this.setupContent(f)
+			this.setupContent(optionsObj)
 		},
 		onOk : function() {
-			var h=this.getParentEditor();
-			var g=h.getSelection();
-			var f=g.getStartElement();
-			var k=f&&f.getAscendant('pre',true);
-			var i=e();
-			this.commitContent(i);
-			var j=d(i);
-			if(k) {
-				k.setAttribute('class',j);
-				k.setText(i.code)
+			var editor=this.getParentEditor();
+			var selection=editor.getSelection();
+			var element=selection.getStartElement();
+			var preElement=element&&element.getAscendant('pre',true);
+			var data=getDefaultOptions();
+			this.commitContent(data);
+			var optionsString=getStringForOptions(data);
+			if(preElement) {
+				preElement.setAttribute('class', optionsString);
+				preElement.setText(data.code)
 			} else {
-				var l=new CKEDITOR.dom.element('pre');
-				l.setAttribute('class',j);
-				l.setText(i.code);
-				h.insertElement(l)
+				var newElement=new CKEDITOR.dom.element('pre');
+				newElement.setAttribute('class', optionsString);
+				newElement.setText(data.code);
+				editor.insertElement(newElement)
 			}
 		}
 	}

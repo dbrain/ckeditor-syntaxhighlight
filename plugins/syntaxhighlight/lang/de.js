@@ -14,8 +14,8 @@
 	showColumns:'Spalten anzeigen',
 	showColumnsLbl:'Zeige Spalten jeder Zeile in der Kopfzeile an.',
 	lineWrap:'Zeilenumbruch',
-	lineWrapLbl:'Deaktiviere den Zeilenumbruch.',
-	lineCount:'Standart Zeilenanzahl',
+	lineWrapLbl:'Deaktiviere Zeilenumbrüche.',
+	lineCount:'Nummerierung der ersten Zeile (falls ungleich 1)',
 	highlight:'Zeilen hervorheben',
 	highlightLbl:'Geben Sie kommasepariert die Zeilen ein, die sie hervorheben wollen, z.B. <em style="font-style:italic">3,10,15</em>.'
 });
