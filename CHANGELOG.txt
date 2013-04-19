@@ -1,0 +1,11 @@
+--- v1.4
+replace "&nbsp;" with space in input
+
+--- v1.3
+validate user- and ckeditor's inputs
+filter out invalid input characters
+
+--- v1.2
+added support for ckeditor 4.1 advanced content filter
+added support for several new brush-modes
+added possibility to change all default settings by config

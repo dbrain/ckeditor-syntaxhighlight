@@ -1,12 +1,4 @@
-﻿CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
-	var parseHtml=function(htmlString) {
-		htmlStrin=ghtmlString.replace(/<br>/g,"\n");
-		htmlString=htmlString.replace(/&amp;/g,'&');
-		htmlString=htmlString.replace(/&lt;/g,'<');
-		htmlString=htmlString.replace(/&gt;/g,'>');
-		htmlString=htmlString.replace(/&quot;/g,'"');
-		return htmlString
-	};
+CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 	var getDefaultOptions=function() {
 		var options=new Object();
 		var validLangs=['applescript','actionscript3','as3','bash','shell','sh','coldfusion','cf','cpp','c','c#','c-sharp','csharp','css','delphi','pascal','pas','diff','patch','erl','erlang','groovy','haxe','hx','java','jfx','javafx','js','jscript','javascript','perl','Perl','pl','php','text','plain','powershell','ps','posh','py','python','ruby','rails','ror','rb','sass','scss','scala','sql','vb','vbnet','xml','xhtml','xslt','html'];
@@ -347,7 +339,7 @@
 			var text='';
 			var optionsObj=null;
 			if(preElement) {
-				code=parseHtml(preElement.getHtml());
+				code=preElement.getHtml().replace(/<br>/g,"\n").replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&amp;/g,'&');
 				optionsObj=getOptionsForString(preElement.getAttribute('class'));
 				optionsObj.code=code
 			} else {
