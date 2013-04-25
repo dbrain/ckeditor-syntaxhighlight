@@ -1,3 +1,9 @@
+--- v1.5.1
+something went wrong during upload, so we are forced to use a new version number
+
+--- v1.5
+added support for typescript
+
 --- v1.4
 replace "&nbsp;" with space in input
 

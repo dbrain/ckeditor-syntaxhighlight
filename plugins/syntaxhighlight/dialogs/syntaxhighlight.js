@@ -1,7 +1,7 @@
 CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 	var getDefaultOptions=function() {
 		var options=new Object();
-		var validLangs=['applescript','actionscript3','as3','bash','shell','sh','coldfusion','cf','cpp','c','c#','c-sharp','csharp','css','delphi','pascal','pas','diff','patch','erl','erlang','groovy','haxe','hx','java','jfx','javafx','js','jscript','javascript','perl','Perl','pl','php','text','plain','powershell','ps','posh','py','python','ruby','rails','ror','rb','sass','scss','scala','sql','vb','vbnet','xml','xhtml','xslt','html'];
+		var validLangs=['applescript','actionscript3','as3','bash','shell','sh','coldfusion','cf','cpp','c','c#','c-sharp','csharp','css','delphi','pascal','pas','diff','patch','erl','erlang','groovy','haxe','hx','java','jfx','javafx','js','jscript','javascript','perl','Perl','pl','php','text','plain','powershell','ps','posh','py','python','ruby','rails','ror','rb','sass','scss','scala','sql','ts','typescript','vb','vbnet','xml','xhtml','xslt','html'];
 		options.hideGutter=String(editor.config.syntaxhighlight_hideGutter).toLowerCase()==='true';
 		options.hideControls=String(editor.config.syntaxhighlight_hideControls).toLowerCase()==='true';
 		options.collapse=String(editor.config.syntaxhighlight_collapse).toLowerCase()==='true';
@@ -38,6 +38,7 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 					else if(options.lang=='py') options.lang='python';
 					else if(options.lang=='rails'||options.lang=='ror'||options.lang=='rb') options.lang='ruby';
 					else if(options.lang=='sass') options.lang='scss';
+					else if(options.lang=='typescript') options.lang='ts';
 					else if(options.lang=='vbnet') options.lang='vb';
 					else if(options.lang=='xhtml'||options.lang=='xslt'||options.lang=='html') options.lang='xml'
 				}
@@ -150,6 +151,7 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 									['Sass','scss'],
 									['Scala','scala'],
 									['SQL','sql'],
+									['TypeScript','ts'],
 									['VB','vb'],
 									['XML/XHTML','xml']
 								],
