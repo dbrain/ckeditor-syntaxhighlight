@@ -1,4 +1,4 @@
-﻿CKEDITOR.plugins.add( 'syntaxhighlight', {
+CKEDITOR.plugins.add( 'syntaxhighlight', {
 	requires : 'dialog',
 	lang : 'en,de,fr', // %REMOVE_LINE_CORE%
 	icons : 'syntaxhighlight', // %REMOVE_LINE_CORE%
@@ -65,6 +65,28 @@ CKEDITOR.config.syntaxhighlight_hideControls = false;
  * @member CKEDITOR.config
  */
 CKEDITOR.config.syntaxhighlight_collapse = false;
+
+/**
+ * Whether the "Use a Code Title" checkbox is checked by default in the
+ * Syntaxhighlight dialog.
+ *
+ *		config.syntaxhighlight_codeTitleChecked = false;
+ *
+ * @cfg
+ * @member CKEDITOR.config
+ */
+CKEDITOR.config.syntaxhighlight_codeTitleChecked = false;
+
+/**
+ * "Default code title" text-field default value in the
+ * Syntaxhighlight dialog.
+ *
+ *		config.syntaxhighlight_codeTitle = 'source';
+ *
+ * @cfg
+ * @member CKEDITOR.config
+ */
+CKEDITOR.config.syntaxhighlight_codeTitle = 'source';
 
 /**
  * Whether the "Show row columns in the first line" checkbox is checked by default in the

@@ -1,4 +1,4 @@
-﻿CKEDITOR.plugins.setLang( 'syntaxhighlight', 'en', {
+CKEDITOR.plugins.setLang( 'syntaxhighlight', 'en', {
 	title:'Add or update a code snippet',
 	contextTitle:'Edit source code',
 	sourceTab:'Source code',
@@ -11,6 +11,7 @@
 	hideControlsLbl:'Hide code controls at the top of the code block.',
 	collapse:'Collapse',
 	collapseLbl:'Collapse the code block by default. (controls need to be turned on)',
+    codeTitleLbl:"Use a Code Title",
 	showColumns:'Show columns',
 	showColumnsLbl:'Show row columns in the first line.',
 	lineWrap:'Disable line wrapping',
