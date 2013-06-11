@@ -1,5 +1,5 @@
-﻿CKEDITOR.plugins.setLang('syntaxhighlight', 'fr', {
-  title:'Ajouter ou modifier un morceau de code source',
+CKEDITOR.plugins.setLang('syntaxhighlight', 'fr', {
+    title:'Ajouter ou modifier un morceau de code source',
 	contextTitle:'&Eacute;diter le code source',
 	sourceTab:'Code source',
 	langLbl:'Sélectionnez le langage:',
@@ -11,6 +11,7 @@
 	hideControlsLbl:'Cacher la barre d\'outils en haut du bloc de code.',
 	collapse:'Réduire le code',
 	collapseLbl:'Réduire le bloc de code par défaut. (la barre d\'outils doit être activée)',
+    codeTitleLbl:"Employez un titre de code",
 	showColumns:'Montrer les colonnes',
 	showColumnsLbl:'Montrer les colonnes sur la première ligne.',
 	lineWrap:'Désactiver le retour à la ligne automatique',
