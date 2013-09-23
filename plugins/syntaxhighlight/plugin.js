@@ -67,6 +67,28 @@ CKEDITOR.config.syntaxhighlight_hideControls = false;
 CKEDITOR.config.syntaxhighlight_collapse = false;
 
 /**
+ * Whether the "Use a Code Title" checkbox is checked by default in the
+ * Syntaxhighlight dialog.
+ *
+ *		config.syntaxhighlight_codeTitleChecked = false;
+ *
+ * @cfg
+ * @member CKEDITOR.config
+ */
+CKEDITOR.config.syntaxhighlight_codeTitleChecked = false;
+
+/**
+ * "Default code title" text-field default value in the
+ * Syntaxhighlight dialog.
+ *
+ *		config.syntaxhighlight_codeTitle = 'source';
+ *
+ * @cfg
+ * @member CKEDITOR.config
+ */
+CKEDITOR.config.syntaxhighlight_codeTitle = 'source';
+
+/**
  * Whether the "Show row columns in the first line" checkbox is checked by default in the
  * Syntaxhighlight dialog.
  *

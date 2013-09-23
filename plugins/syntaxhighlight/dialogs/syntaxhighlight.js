@@ -5,12 +5,14 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 		options.hideGutter=String(editor.config.syntaxhighlight_hideGutter).toLowerCase()==='true';
 		options.hideControls=String(editor.config.syntaxhighlight_hideControls).toLowerCase()==='true';
 		options.collapse=String(editor.config.syntaxhighlight_collapse).toLowerCase()==='true';
+        options.codeTitleChecked=String(editor.config.syntaxhighlight_codeTitleChecked).toLowerCase()==='true';
+        options.codeTitle=String(editor.config.syntaxhighlight_codeTitle);
 		options.showColumns=String(editor.config.syntaxhighlight_showColumns).toLowerCase()==='true';
 		options.noWrap=String(editor.config.syntaxhighlight_noWrap).toLowerCase()==='true';
 		options.firstLine=editor.config.syntaxhighlight_firstLine;
 		options.highlightChecked=String(editor.config.syntaxhighlight_highlightChecked).toLowerCase()==='true';
 		options.highlight=editor.config.syntaxhighlight_highlight;
-		options.lang=(validLangs.indexOf(editor.config.syntaxhighlight_lang)>-1) ? editor.config.syntaxhighlight_lang : 'as3';
+		options.lang=(validLangs.indexOf(editor.config.syntaxhighlight_lang)>-1) ? editor.config.syntaxhighlight_lang : 'php';
 		options.code=editor.config.syntaxhighlight_code;
 		return options
 	};
@@ -73,6 +75,7 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 			if(optionsString.indexOf('wrap-lines')>-1) {
 				options.noWrap=true
 			}
+            options.codeTitle='source';
 		}
 		return options
 	};
@@ -107,6 +110,13 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 		}
 		return result
 	};
+
+    var getTitle=function(optionsObject){
+   		var title="";
+   		if(optionsObject.codeTitleChecked&&optionsObject.codeTitle!=""){title+=optionsObject.codeTitle}
+   		return title
+   	};
+
 	return {
 		title : editor.lang.syntaxhighlight.title,
 		minWidth : 500,
@@ -237,6 +247,43 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								}
 							},
 							{
+                                type:"html",
+                                html:"<strong>"+editor.lang.syntaxhighlight.codeTitleLbl+"</strong>"
+                            },
+                            {
+                                type:"hbox",
+                                widths:["5%","95%"],
+                                children:[
+                                    {
+                                        type:"checkbox",
+                                        id:"ct_toggle",
+                                        label:"",
+                                        setup:function(data) {
+                                            this.setValue(data.codeTitleChecked)
+                                        },
+                                        commit:function(data) {
+                                            data.codeTitleChecked=this.getValue()
+                                        }
+                                    },
+                                    {
+                                        type:"text",
+                                        id:"default_ti",
+                                        style:"width: 40%;",
+                                        label:"",
+                                        setup:function(data) {
+                                            if(data.codeTitle!="") {
+                                                this.setValue(data.codeTitle)
+                                            }
+                                        },
+                                        commit:function(data) {
+                                            if(this.getValue()&&this.getValue()!="") {
+                                                data.codeTitle=this.getValue()
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+							{
 								type : 'html',
 								html : '<strong>'+editor.lang.syntaxhighlight.showColumns+'</strong>'
 							},
@@ -343,11 +390,18 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 			if(preElement) {
 				code=preElement.getHtml().replace(/<br>/g,"\n").replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&amp;/g,'&');
 				optionsObj=getOptionsForString(preElement.getAttribute('class'));
-				optionsObj.code=code
+                codeTitle=preElement.getAttribute("title");
+                if(codeTitle!=""){
+                    optionsObj.codeTitle=codeTitle;
+                    optionsObj.codeTitleChecked=true;
 			} else {
-				optionsObj=getDefaultOptions()
+                    optionsObj.codeTitle="source";
 			}
-			this.setupContent(optionsObj)
+				optionsObj.code=code;
+			} else {
+				optionsObj=getDefaultOptions();
+			}
+			this.setupContent(optionsObj);
 		},
 		onOk : function() {
 			var editor=this.getParentEditor();
@@ -357,12 +411,15 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 			var data=getDefaultOptions();
 			this.commitContent(data);
 			var optionsString=getStringForOptions(data);
+            var jtitle=getTitle(data);
 			if(preElement) {
 				preElement.setAttribute('class', optionsString);
+                preElement.setAttribute("title",jtitle);
 				preElement.setText(data.code)
 			} else {
 				var newElement=new CKEDITOR.dom.element('pre');
 				newElement.setAttribute('class', optionsString);
+                newElement.setAttribute("title",jtitle);
 				newElement.setText(data.code);
 				editor.insertElement(newElement)
 			}
