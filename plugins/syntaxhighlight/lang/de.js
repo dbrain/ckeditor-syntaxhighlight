@@ -11,6 +11,7 @@
 	hideControlsLbl:'Verstecke die Menüleiste über dem Quelltextblock.',
 	collapse:'Einklappen',
 	collapseLbl:'Klappe den Quelltextblock standartmäßig ein. (Kontrollfelder müssen aktiviert werden)',
+  codeTitleLbl:"Verwenden Sie einen Code-Titel",
 	showColumns:'Spalten anzeigen',
 	showColumnsLbl:'Zeige Spalten jeder Zeile in der Kopfzeile an.',
 	lineWrap:'Zeilenumbruch',
