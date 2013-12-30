@@ -1,11 +1,11 @@
-﻿CKEDITOR.plugins.add( 'syntaxhighlight', {
+CKEDITOR.plugins.add( 'syntaxhighlight', {
 	requires : 'dialog',
 	lang : 'en,de,fr', // %REMOVE_LINE_CORE%
 	icons : 'syntaxhighlight', // %REMOVE_LINE_CORE%
 	init : function( editor ) {
 		editor.addCommand( 'syntaxhighlightDialog', new CKEDITOR.dialogCommand( 'syntaxhighlightDialog', {
-			allowedContent: 'pre(*)',
-			requiredContent: 'pre(*)'
+			allowedContent: 'pre[title](*)',
+			requiredContent: 'pre[title](*)'
 		} ) );
 		editor.ui.addButton && editor.ui.addButton( 'Syntaxhighlight',
 		{
@@ -67,26 +67,15 @@ CKEDITOR.config.syntaxhighlight_hideControls = false;
 CKEDITOR.config.syntaxhighlight_collapse = false;
 
 /**
- * Whether the "Use a Code Title" checkbox is checked by default in the
- * Syntaxhighlight dialog.
- *
- *		config.syntaxhighlight_codeTitleChecked = false;
- *
- * @cfg
- * @member CKEDITOR.config
- */
-CKEDITOR.config.syntaxhighlight_codeTitleChecked = false;
-
-/**
  * "Default code title" text-field default value in the
  * Syntaxhighlight dialog.
  *
- *		config.syntaxhighlight_codeTitle = 'source';
+ *		config.syntaxhighlight_codeTitle = '';
  *
  * @cfg
  * @member CKEDITOR.config
  */
-CKEDITOR.config.syntaxhighlight_codeTitle = 'source';
+CKEDITOR.config.syntaxhighlight_codeTitle = '';
 
 /**
  * Whether the "Show row columns in the first line" checkbox is checked by default in the

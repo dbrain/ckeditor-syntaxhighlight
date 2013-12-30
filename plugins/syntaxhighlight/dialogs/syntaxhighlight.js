@@ -1,23 +1,23 @@
 CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 	var getDefaultOptions=function() {
 		var options=new Object();
-		var validLangs=['applescript','actionscript3','as3','bash','shell','sh','coldfusion','cf','cpp','c','c#','c-sharp','csharp','css','delphi','pascal','pas','diff','patch','erl','erlang','groovy','haxe','hx','java','jfx','javafx','js','jscript','javascript','perl','Perl','pl','php','text','plain','powershell','ps','posh','py','python','ruby','rails','ror','rb','sass','scss','scala','sql','ts','typescript','vb','vbnet','xml','xhtml','xslt','html'];
+		var validLangs=['applescript','actionscript3','as3','bash','shell','sh','coldfusion','cf','cpp','c','c#','c-sharp','csharp','css','delphi','pascal','pas','diff','patch','erl','erlang','groovy','haxe','hx','java','jfx','javafx','js','jscript','javascript','perl','Perl','pl','php','text','plain','powershell','ps','posh','py','python','ruby','rails','ror','rb','sass','scss','scala','sql','tap','Tap','TAP','ts','typescript','vb','vbnet','xml','xhtml','xslt','html'];
 		options.hideGutter=String(editor.config.syntaxhighlight_hideGutter).toLowerCase()==='true';
 		options.hideControls=String(editor.config.syntaxhighlight_hideControls).toLowerCase()==='true';
 		options.collapse=String(editor.config.syntaxhighlight_collapse).toLowerCase()==='true';
-        options.codeTitleChecked=String(editor.config.syntaxhighlight_codeTitleChecked).toLowerCase()==='true';
-        options.codeTitle=String(editor.config.syntaxhighlight_codeTitle);
+		options.codeTitle=editor.config.syntaxhighlight_codeTitle;
 		options.showColumns=String(editor.config.syntaxhighlight_showColumns).toLowerCase()==='true';
 		options.noWrap=String(editor.config.syntaxhighlight_noWrap).toLowerCase()==='true';
 		options.firstLine=editor.config.syntaxhighlight_firstLine;
 		options.highlightChecked=String(editor.config.syntaxhighlight_highlightChecked).toLowerCase()==='true';
 		options.highlight=editor.config.syntaxhighlight_highlight;
-		options.lang=(validLangs.indexOf(editor.config.syntaxhighlight_lang)>-1) ? editor.config.syntaxhighlight_lang : 'php';
+		options.lang=(validLangs.indexOf(editor.config.syntaxhighlight_lang)>-1) ? editor.config.syntaxhighlight_lang : 'as3';
 		options.code=editor.config.syntaxhighlight_code;
 		return options
 	};
-	var getOptionsForString=function(optionsString) {
+	var getOptionsForString=function(preElement) {
 		var options=getDefaultOptions();
+		var optionsString=preElement.getAttribute('class');
 		if(optionsString) {
 			if(optionsString.indexOf('brush')>-1) {
 				var match=/brush:[ ]*(\w*)/.exec(optionsString);
@@ -40,6 +40,7 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 					else if(options.lang=='py') options.lang='python';
 					else if(options.lang=='rails'||options.lang=='ror'||options.lang=='rb') options.lang='ruby';
 					else if(options.lang=='sass') options.lang='scss';
+					else if(options.lang=='Tap'||options.lang=='TAP') options.lang='tap';
 					else if(options.lang=='typescript') options.lang='ts';
 					else if(options.lang=='vbnet') options.lang='vb';
 					else if(options.lang=='xhtml'||options.lang=='xslt'||options.lang=='html') options.lang='xml'
@@ -75,7 +76,13 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 			if(optionsString.indexOf('wrap-lines')>-1) {
 				options.noWrap=true
 			}
-            options.codeTitle='source';
+			var codeTitle=preElement.getAttribute('title');
+			if (codeTitle) {
+				codeTitle=codeTitle.replace(/^\s+|\s+$/g,'');
+				if(codeTitle.length>0) {
+					options.codeTitle=codeTitle
+				}
+			}
 		}
 		return options
 	};
@@ -110,13 +117,13 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 		}
 		return result
 	};
-
-    var getTitle=function(optionsObject){
-   		var title="";
-   		if(optionsObject.codeTitleChecked&&optionsObject.codeTitle!=""){title+=optionsObject.codeTitle}
-   		return title
+	var getTitleForOptions=function(optionsObject){
+		optionsObject.codeTitle=optionsObject.codeTitle.replace(/^\s+|\s+$/g,'');
+		if(optionsObject.codeTitle.length>0) {
+			 return optionsObject.codeTitle
+		}
+		return false
    	};
-
 	return {
 		title : editor.lang.syntaxhighlight.title,
 		minWidth : 500,
@@ -161,6 +168,7 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 									['Sass','scss'],
 									['Scala','scala'],
 									['SQL','sql'],
+									['TAP','tap'],
 									['TypeScript','ts'],
 									['VB','vb'],
 									['XML/XHTML','xml']
@@ -247,42 +255,31 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 								}
 							},
 							{
-                                type:"html",
-                                html:"<strong>"+editor.lang.syntaxhighlight.codeTitleLbl+"</strong>"
-                            },
-                            {
-                                type:"hbox",
-                                widths:["5%","95%"],
-                                children:[
-                                    {
-                                        type:"checkbox",
-                                        id:"ct_toggle",
-                                        label:"",
-                                        setup:function(data) {
-                                            this.setValue(data.codeTitleChecked)
-                                        },
-                                        commit:function(data) {
-                                            data.codeTitleChecked=this.getValue()
-                                        }
-                                    },
-                                    {
-                                        type:"text",
-                                        id:"default_ti",
-                                        style:"width: 40%;",
-                                        label:"",
-                                        setup:function(data) {
-                                            if(data.codeTitle!="") {
-                                                this.setValue(data.codeTitle)
-                                            }
-                                        },
-                                        commit:function(data) {
-                                            if(this.getValue()&&this.getValue()!="") {
-                                                data.codeTitle=this.getValue()
-                                            }
-                                        }
-                                    }
-                                ]
-                            },
+								type : 'html',
+								html : '<strong>'+editor.lang.syntaxhighlight.codeTitleLbl+'</strong>'
+							},
+							{
+								type : 'hbox',
+								widths : ['5%','95%'],
+								children : [
+									{
+										type : 'text',
+										id : 'default_ti',
+										style : 'width:40%',
+										label : '',
+										setup : function(data) {
+											if(data.codeTitle!=null) {
+												this.setValue(data.codeTitle)
+											}
+										},
+										commit : function(data) {
+											if(this.getValue()&&this.getValue()!='') {
+												data.codeTitle=this.getValue()
+											}
+										}
+									}
+								]
+							},
 							{
 								type : 'html',
 								html : '<strong>'+editor.lang.syntaxhighlight.showColumns+'</strong>'
@@ -324,7 +321,7 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 									{
 										type : 'text',
 										id : 'default_lc',
-										style : 'width:15%;',
+										style : 'width:15%',
 										label : '',
 										setup : function(data) {
 											if(data.firstLine>1) {
@@ -350,7 +347,7 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 									{
 										type : 'text',
 										id : 'default_hl',
-										style : 'width:40%;',
+										style : 'width:40%',
 										label : '',
 										setup : function(data) {
 											if(data.highlight!=null) {
@@ -389,19 +386,12 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 			var optionsObj=null;
 			if(preElement) {
 				code=preElement.getHtml().replace(/<br>/g,"\n").replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&amp;/g,'&');
-				optionsObj=getOptionsForString(preElement.getAttribute('class'));
-                codeTitle=preElement.getAttribute("title");
-                if(codeTitle!=""){
-                    optionsObj.codeTitle=codeTitle;
-                    optionsObj.codeTitleChecked=true;
+				optionsObj=getOptionsForString(preElement);
+				optionsObj.code=code
 			} else {
-                    optionsObj.codeTitle="source";
+				optionsObj=getDefaultOptions()
 			}
-				optionsObj.code=code;
-			} else {
-				optionsObj=getDefaultOptions();
-			}
-			this.setupContent(optionsObj);
+			this.setupContent(optionsObj)
 		},
 		onOk : function() {
 			var editor=this.getParentEditor();
@@ -411,15 +401,15 @@ CKEDITOR.dialog.add( 'syntaxhighlightDialog', function( editor ) {
 			var data=getDefaultOptions();
 			this.commitContent(data);
 			var optionsString=getStringForOptions(data);
-            var jtitle=getTitle(data);
+			var ti=getTitleForOptions(data);
 			if(preElement) {
 				preElement.setAttribute('class', optionsString);
-                preElement.setAttribute("title",jtitle);
+				(ti!=false) ? preElement.setAttribute('title', ti) : preElement.removeAttribute('title');
 				preElement.setText(data.code)
 			} else {
 				var newElement=new CKEDITOR.dom.element('pre');
 				newElement.setAttribute('class', optionsString);
-                newElement.setAttribute("title",jtitle);
+				if (ti!=false) newElement.setAttribute('title', ti);
 				newElement.setText(data.code);
 				editor.insertElement(newElement)
 			}
