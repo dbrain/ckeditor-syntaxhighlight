@@ -10,6 +10,7 @@ CKEDITOR.plugins.add( 'syntaxhighlight', {
 		editor.ui.addButton && editor.ui.addButton( 'Syntaxhighlight',
 		{
 			label : editor.lang.syntaxhighlight.title,
+			icon : this.path + 'icons/syntaxhighlight.png',
 			command : 'syntaxhighlightDialog',
 			toolbar : 'insert,98'
 		} );
